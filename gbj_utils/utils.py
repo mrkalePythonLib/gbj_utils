@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Module for auxilliary constants, utilities, and functions."""
-__version__ = '0.3.0'
+__version__ = '0.4.0'
 __status__ = 'Beta'
 __author__ = 'Libor Gabaj'
 __copyright__ = 'Copyright 2019, ' + __author__
@@ -18,7 +18,7 @@ import os
 ###############################################################################
 # Functions
 ###############################################################################
-def check_service(script):
+def check_service(script: str) -> bool:
     """Detect running script as a service.
 
     Arguments
@@ -40,18 +40,29 @@ def check_service(script):
     return len(ls) > 0
 
 
-def linux():
+def linux() -> bool:
     """Return flag about running on Linux platform."""
     return platform.system() == 'Linux'
 
 
-def windows():
+def windows() -> bool:
     """Return flag about running on Windows platform."""
     return platform.system() == 'Windows'
 
-def root():
+
+def root() -> bool:
     """Return flag about running on Linux as root."""
     if hasattr(os, 'getegid'):
         return os.getegid() == 0  # pylint: disable=no-member
     else:
         return True
+
+
+def envdir(env_var: str) -> str:
+    """Return folder from environment variable or current one."""
+    result = None
+    if os.environ.get(env_var):
+        result = os.path.expandvars('$' + env_var)
+        if (not os.path.isdir(result)):
+            result = None
+    return result or os.getcwd()
